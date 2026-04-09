@@ -1,0 +1,17 @@
+---
+- name: Installation de k3s sur la VM Debian
+  hosts: k3s_nodes
+  become: yes
+  tasks:
+      - name: Télécharger et exécuter le script d'installation k3s
+        shell: |
+            curl -sfL https://get.k3s.io | sh -s - server \
+            --tls-san {{ ansible_host }} \
+            --write-kubeconfig-mode 644
+        args:
+            # Cela évite de réinstaller si k3s est déjà présent (Idempotence)
+            creates: /usr/local/bin/k3s
+
+      - name: Attendre que le fichier de config kubeconfig soit généré
+        wait_for:
+            path: /etc/rancher/k3s/k3s.yaml

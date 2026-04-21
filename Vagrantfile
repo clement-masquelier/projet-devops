@@ -10,4 +10,15 @@ Vagrant.configure("2") do |config|
             vb.memory = "2048"
         end
     end
+
+    config.vm.define "github-runner" do |runner|
+        runner.vm.hostname = "github-runner"
+        runner.vm.network "private_network", ip: "192.168.56.11"
+
+        runner.vm.provider "virtualbox" do |vb|
+            vb.name = "Vagrant_github_runner"
+            vb.memory = "2048"
+        end
+    end
+
 end

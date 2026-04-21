@@ -1,0 +1,22 @@
+name: Configure Infrastructure with Ansible
+
+on:
+ push:
+    branches:
+        - main
+jobs:
+    ansible:
+        runs-on: self-hosted
+        steps:
+        - name: Checkout code
+            uses: actions/checkout@v3
+    
+        - name: Set up Ansible
+            run: |
+            sudo apt update
+            sudo apt install -y ansible
+    
+        - name: Run Ansible Playbooks
+            run: |
+            ansible-playbook -i ansible/inventory.ini ansible/k3s-install.yaml
+        

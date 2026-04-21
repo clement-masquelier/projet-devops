@@ -15,7 +15,7 @@ jobs:
             - name: Set up Ansible
               run: |
                   sudo apt update
-                  sudo apt install -y ansible
+                  sudo apt install -y ansible sshpass
 
             - name: Run Ansible Playbooks
               run: |

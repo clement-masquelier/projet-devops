@@ -9,16 +9,25 @@ Vagrant.configure("2") do |config|
             vb.name = "Vagrant_k3s_server"
             vb.memory = "2048"
         end
-    end
 
-    config.vm.define "github-runner" do |runner|
-        runner.vm.hostname = "github-runner"
-        runner.vm.network "private_network", ip: "192.168.56.11"
+        # Injection de la clé SSH générée dans le fichier cloud-config.yaml
+        pub_key = File.read("./ssh_keys/vagrant_k3s_key.pub").strip rescue "CLE_NON_TROUVEE"
 
-        runner.vm.provider "virtualbox" do |vb|
-            vb.name = "Vagrant_github_runner"
-            vb.memory = "2048"
-        end
+        server.vm.provision "shell", inline: <<-SHELL
+        echo "🔑 Configuration de l'accès SSH Ansible..."
+        mkdir -p /home/vagrant/.ssh
+        
+        # Ajout de la clé seulement si elle n'y est pas déjà
+        if ! grep -q "#{pub_key}" /home/vagrant/.ssh/authorized_keys 2>/dev/null; then
+            echo "#{pub_key}" >> /home/vagrant/.ssh/authorized_keys
+        fi
+        
+        # Sécurisation stricte des droits (obligatoire pour SSH)
+        chmod 700 /home/vagrant/.ssh
+        chmod 600 /home/vagrant/.ssh/authorized_keys
+        chown -R vagrant:vagrant /home/vagrant/.ssh
+        echo "✅ Accès SSH configuré avec succès !"
+        SHELL
     end
 
 end

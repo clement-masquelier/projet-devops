@@ -30,6 +30,7 @@ jobs:
               run: |
                   wsl mkdir -p ~/.ssh
                   $env:SSH_KEY | wsl tee ~/.ssh/k3s_ansible_key > $null
+                  wsl sed -i 's/\r$//' ~/.ssh/k3s_ansible_key
                   wsl chmod 600 ~/.ssh/k3s_ansible_key
 
             - name: Ansible playbook for k3s installation

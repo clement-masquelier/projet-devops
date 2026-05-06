@@ -30,6 +30,10 @@ jobs:
               run: |
                   vagrant up
 
+            - name: Wait for VMs to be ready
+              run: |
+                  Start-Sleep -Seconds 20
+
             - name: Ansible playbook for k3s installation
               run: |
                   wsl ansible-playbook -i ansible/inventory.ini ansible/k3s-install.yaml

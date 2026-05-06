@@ -19,5 +19,3 @@ fi
 
 # Récupération de la clé publique
 PUB_KEY=$(cat "${KEY_PATH}.pub")
-
-echo "Fichier $CLOUD_CONFIG_FILE généré avec succès !"

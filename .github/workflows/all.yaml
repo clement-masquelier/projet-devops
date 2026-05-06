@@ -1,0 +1,54 @@
+name: Configure Infrastructure with Ansible
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    infra:
+        name: Provision & Configure VMs
+        runs-on: self-hosted
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Vagrant Up
+              run: |
+                  vagrant up
+
+            - name: Copy SSH Secret Key to WSL
+              run: |
+                  wsl echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/k3s_ansible_key
+                  wsl chmod 600 ~/.ssh/k3s_ansible_key
+
+            - name: Ansible playbook for k3s installation
+              run: |
+                  wsl ansible-playbook -i ansible/inventory.ini ansible/k3s-install.yaml
+
+    build-and-push:
+        runs-on: self-hosted
+        needs: infra
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Login to DockerHub
+              run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build and push Docker image
+              run: |
+                  docker build -t clmtm/devops_final:latest .
+                  docker push clmtm/devops_final:latest
+
+    deploy-app:
+        runs-on: self-hosted
+        needs: build-and-push
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Apply K8s Manifests (via WSL)
+              run: |
+                  wsl kubectl apply -f k8s/
+                  wsl kubectl rollout restart deployment api-lacet

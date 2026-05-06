@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
+              with:
+              clean: false
 
             - name: Create ssh_keys directory and copy public key
               env:

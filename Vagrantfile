@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
         end
 
         # Injection de la clé SSH générée dans le fichier cloud-config.yaml
-        pub_key = File.read("./ssh_keys/vagrant_k3s_key.pub").strip rescue "CLE_NON_TROUVEE"
+        pub_key = File.read("./ssh_keys/k3s_ansible_key.pub").strip rescue "CLE_NON_TROUVEE"
 
         server.vm.provision "shell", inline: <<-SHELL
         echo "🔑 Configuration de l'accès SSH Ansible..."

@@ -13,6 +13,11 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
+            - name: Create ssh_keys directory and copy public key
+              run: |
+                  mkdir -p ssh_keys
+                  echo "${{ secrets.SSH_PUBLIC_KEY }}" > ssh_keys/k3s_ansible_key.pub
+
             - name: Vagrant Up
               run: |
                   vagrant up

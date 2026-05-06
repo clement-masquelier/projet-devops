@@ -17,5 +17,5 @@ else
     echo "La clé SSH existe déjà ($KEY_PATH)."
 fi
 
-# Récupération de la clé publique
+# Récupération de la clé
 PUB_KEY=$(cat "${KEY_PATH}.pub")

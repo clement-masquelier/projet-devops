@@ -17,6 +17,7 @@ jobs:
 
             - name: Generate SSH Key Pair
               run: |
+                  wsl sed -i 's/\r$//' ./scripts/generate_key_pair.sh
                   wsl chmod +x ./scripts/generate_key_pair.sh 
                   wsl bash ./scripts/generate_key_pair.sh
 

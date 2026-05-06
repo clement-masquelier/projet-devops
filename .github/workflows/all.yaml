@@ -23,7 +23,7 @@ jobs:
                   vagrant up
 
             - name: Copy SSH Secret Key to WSL
-               env:
+              env:
                   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
               run: |
                   wsl mkdir -p ~/.ssh

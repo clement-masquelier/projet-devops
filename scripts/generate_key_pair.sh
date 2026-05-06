@@ -6,6 +6,9 @@ CLOUD_CONFIG_FILE="cloud-config.yaml"
 
 echo "Démarrage de la configuration de l'infrastructure..."
 
+# Création du répertoire pour les clés SSH s'il n'existe pas
+mkdir -p "$(dirname "$KEY_PATH")"
+
 # 1. Génération de la clé SSH (si elle n'existe pas déjà)
 if [ ! -f "$KEY_PATH" ]; then
     echo "Création d'une nouvelle paire de clés SSH..."

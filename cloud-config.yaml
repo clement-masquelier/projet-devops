@@ -3,4 +3,4 @@ users:
   - default
   - name: vagrant
     ssh_authorized_keys:
-      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDcz2AsLaMi/rdpZmOwtq9eMrq2mAui2lOxm5XuTdxH1 ansible-k3s-runner"
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII26MOaP00i9AgFmCreVS4pT6MQlDpQy2wIUtTRSOUkf ansible-k3s-runner"

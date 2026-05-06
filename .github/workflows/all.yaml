@@ -15,25 +15,19 @@ jobs:
               with:
                   clean: false
 
-            - name: Create ssh_keys directory and copy public key
-              env:
-                  SSH_PUB_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+            - name: Generate SSH Key Pair
               run: |
-                  New-Item -ItemType Directory -Force -Path ssh_keys
-                  Set-Content -Path "ssh_keys\k3s_ansible_key.pub" -Value $env:SSH_PUB_KEY
+                  wsl chmod +x scripts/generate_key_pair.sh
+                  wsl ./scripts/generate_key_pair.sh
+
+            - name: Copy SSH Key to WSL
+              run: |
+                  wsl cp ./ssh_keys/k3s_ansible_key ~/.ssh/k3s_ansible_key
+                  wsl chmod 600 ~/.ssh/k3s_ansible_key
 
             - name: Vagrant Up
               run: |
                   vagrant up
-
-            - name: Copy SSH Secret Key to WSL
-              env:
-                  SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-              run: |
-                  wsl mkdir -p ~/.ssh
-                  $env:SSH_KEY | wsl tee ~/.ssh/k3s_ansible_key > $null
-                  wsl sed -i 's/\r$//' ~/.ssh/k3s_ansible_key
-                  wsl chmod 600 ~/.ssh/k3s_ansible_key
 
             - name: Ansible playbook for k3s installation
               run: |

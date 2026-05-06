@@ -20,16 +20,4 @@ fi
 # Récupération de la clé publique
 PUB_KEY=$(cat "${KEY_PATH}.pub")
 
-# Création du fichier cloud-config.yaml avec la clé injectée
-echo "Génération du fichier $CLOUD_CONFIG_FILE..."
-
-cat <<EOF > $CLOUD_CONFIG_FILE
-#cloud-config
-users:
-  - default
-  - name: vagrant
-    ssh_authorized_keys:
-      - "$PUB_KEY"
-EOF
-
 echo "Fichier $CLOUD_CONFIG_FILE généré avec succès !"

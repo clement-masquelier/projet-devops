@@ -35,6 +35,8 @@ jobs:
                   Start-Sleep -Seconds 20
 
             - name: Ansible playbook for k3s installation
+              env:
+                  ANSIBLE_TIMEOUT: 60
               run: |
                   wsl ansible-playbook -i ansible/inventory.ini ansible/k3s-install.yaml
 

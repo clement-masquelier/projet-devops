@@ -15,7 +15,7 @@
       - name: Attendre que le fichier de config kubeconfig soit généré
         wait_for:
             path: /etc/rancher/k3s/k3s.yaml
-            # 1. On s'assure que le dossier .kube existe sur ton WSL (au cas où)
+            # On s'assure que le dossier .kube existe sur WSL
       - name: S'assurer que le dossier local .kube existe
         file:
             path: "{{ lookup('env', 'HOME') }}/.kube"
@@ -24,18 +24,18 @@
         delegate_to: localhost
         become: no
 
-      # 2. On rapatrie le fichier k3s.yaml de la VM vers ton WSL
+      # On rapatrie le fichier k3s.yaml de la VM vers ton WSL
       - name: Récupérer le fichier kubeconfig vers WSL
         fetch:
             src: /etc/rancher/k3s/k3s.yaml
             dest: "{{ lookup('env', 'HOME') }}/.kube/config"
-            flat: yes # "flat: yes" évite qu'Ansible ne crée des sous-dossiers avec le nom de la VM
+            flat: yes
 
-      # 3. On modifie le fichier fraîchement téléchargé sur WSL
+      # On modifie le fichier fraîchement téléchargé sur WSL
       - name: Remplacer 127.0.0.1 par l'IP de la VM dans le kubeconfig local
         replace:
             path: "{{ lookup('env', 'HOME') }}/.kube/config"
             regexp: '127\.0\.0\.1'
-            replace: '{{ ansible_host }}' # Il utilisera automatiquement l'IP "192.168.56.10"
+            replace: '{{ ansible_host }}'
         delegate_to: localhost
         become: no

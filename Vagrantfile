@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
             vb.memory = "2048"
         end
 
-        # 🛠️ Injection de la clé SSH générée par bootstrap.sh (Méthode 100% compatible Windows)
+        # Injection de la clé SSH générée dans le fichier cloud-config.yaml
         pub_key = File.read("./ssh_keys/vagrant_k3s_key.pub").strip rescue "CLE_NON_TROUVEE"
 
         server.vm.provision "shell", inline: <<-SHELL

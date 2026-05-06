@@ -118,18 +118,37 @@ Voici les étapes à suivre pour configurer l'infrastructure manuellement, sans 
 2. **Génération de la clé SSH et du fichier cloud-config.yaml** :
     - Exécutez le script `generate_key_pair.sh` pour générer une paire de clés SSH et créer le fichier `cloud-config.yaml` avec la clé publique injectée.
     - Ce script va créer une clé SSH dans le dossier `.ssh_keys` et générer un fichier `cloud-config.yaml` qui sera utilisé pour configurer les machines virtuelles avec la clé SSH.
+        ```bash
+        chmod +x scripts/generate_key_pair.sh
+        ./scripts/generate_key_pair.sh
+        ```
 3. **Lancement de l'infrastructure avec Vagrant** :
     - Exécutez la commande `vagrant up` pour lancer les machines virtuelles définies dans le Vagrantfile. Vagrant utilisera le fichier `cloud-config.yaml` pour configurer les machines avec la clé SSH.
     - Cette étape va créer les machines virtuelles nécéssaires pour k3s et Grafana/Prometheus, et les configurer pour qu'elles soient accessibles via SSH avec la clé générée.
+        ```bash
+        vagrant up
+        ```
 4. **Configuration de l'inventaire Ansible** :
     - Modifiez le fichier `ansible/inventory.ini` pour vous assurer que les adresses IP, les utilisateurs et les chemins des clés SSH sont corrects pour vos machines virtuelles.
     - Assurez-vous que les machines virtuelles sont accessibles via SSH en utilisant la clé générée.
-5. **Déploiement de k3s avec Ansible** :
+5. **Vérification de l'accessibilité de la clé SSH**
+    - Avant de pouvoir lancer les playbooks Ansible, il faut vous assurer que la clé SSH générée est accessible depuis WSL. Pour cela, vous pouvez copier la clé privée dans le répertoire `~/.ssh/` de WSL et ajuster les permissions de la clé pour qu'elle soit sécurisée avec les commandes suivantes :
+        ```bash
+        cp ./ssh_keys/k3s_ansible_key ~/.ssh/k3s_ansible_key
+        chmod 600 ~/.ssh/k3s_ansible_key
+        ```
+6. **Déploiement de k3s avec Ansible** :
     - Exécutez le playbook Ansible `deploy_k3s.yaml` pour déployer k3s sur les machines virtuelles. Ce playbook va installer k3s et configurer le cluster Kubernetes.
     - Une fois le playbook exécuté, vous devriez avoir un cluster k3s opérationnel avec les machines virtuelles configurées.
-6. **Déploiement de Grafana et Prometheus** :
+        ```bash
+        ansible-playbook -i ansible/inventory.ini ansible/deploy_k3s.yaml
+        ```
+7. **Déploiement de Grafana et Prometheus** :
     - Exécutez le playbook Ansible `deploy_grafana_prometheus.yaml` pour déployer Grafana et Prometheus sur une machine virtuelle dédiée. Ce playbook va installer Grafana et Prometheus, et les configurer pour qu'ils puissent collecter des métriques du cluster k3s.
     - Après l'exécution de ce playbook, vous devriez avoir Grafana et Prometheus opérationnels et configurés pour surveiller votre cluster k3s.
+        ```bash
+        ansible-playbook -i ansible/inventory.ini ansible/deploy_grafana_prometheus.yaml
+        ```
 
 </div>
 

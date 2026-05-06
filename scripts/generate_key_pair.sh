@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Définition des variables
-KEY_PATH=".ssh_keys/k3s_ansible_key"
+KEY_PATH="ssh_keys/k3s_ansible_key"
 CLOUD_CONFIG_FILE="cloud-config.yaml"
 
 echo "Démarrage de la configuration de l'infrastructure..."

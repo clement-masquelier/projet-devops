@@ -32,7 +32,7 @@ jobs:
 
             - name: Wait for VMs to be ready
               run: |
-                  Start-Sleep -Seconds 20
+                  Start-Sleep -Seconds 30
 
             - name: Ansible playbook for k3s & grafana installation
               env:

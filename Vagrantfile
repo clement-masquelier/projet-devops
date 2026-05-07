@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
         pub_key = File.read("./ssh_keys/k3s_ansible_key.pub").strip rescue "CLE_NON_TROUVEE"
 
         server.vm.provision "shell", inline: <<-SHELL
-        echo "🔑 Configuration de l'accès SSH Ansible..."
+        echo "Configuration de l'accès SSH Ansible..."
         mkdir -p /home/vagrant/.ssh
         
         # Ajout de la clé seulement si elle n'y est pas déjà
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
         chmod 700 /home/vagrant/.ssh
         chmod 600 /home/vagrant/.ssh/authorized_keys
         chown -R vagrant:vagrant /home/vagrant/.ssh
-        echo "✅ Accès SSH configuré avec succès !"
+        echo "Accès SSH configuré avec succès !"
         SHELL
     end
     
@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
         pub_key = File.read("./ssh_keys/k3s_ansible_key.pub").strip rescue "CLE_NON_TROUVEE"
 
         server.vm.provision "shell", inline: <<-SHELL
-        echo "🔑 Configuration de l'accès SSH Ansible..."
+        echo "Configuration de l'accès SSH Ansible..."
         mkdir -p /home/vagrant/.ssh
         
         # Ajout de la clé seulement si elle n'y est pas déjà
@@ -55,7 +55,7 @@ Vagrant.configure("2") do |config|
         chmod 700 /home/vagrant/.ssh
         chmod 600 /home/vagrant/.ssh/authorized_keys
         chown -R vagrant:vagrant /home/vagrant/.ssh
-        echo "✅ Accès SSH configuré avec succès !"
+        echo "Accès SSH configuré avec succès !"
         SHELL
     end
 

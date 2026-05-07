@@ -115,15 +115,15 @@ Voici les étapes à suivre pour configurer l'infrastructure manuellement, sans 
     - Sur WSL, installez Ansible ainsi que les dépendances nécessaires pour exécuter les playbooks Ansible.
     - Toujours sur WSL, installez kubectl pour pouvoir interagir avec le cluster Kubernetes une fois qu'il sera déployé. L'utilisation de K9S est également recommandée pour une gestion plus facile du cluster.
 
-2. **Génération de la clé SSH et du fichier cloud-config.yaml** :
-    - Exécutez le script `generate_key_pair.sh` pour générer une paire de clés SSH et créer le fichier `cloud-config.yaml` avec la clé publique injectée.
-    - Ce script va créer une clé SSH dans le dossier `.ssh_keys` et générer un fichier `cloud-config.yaml` qui sera utilisé pour configurer les machines virtuelles avec la clé SSH.
+2. **Génération de la clé SSH** :
+    - Exécutez le script `generate_key_pair.sh` pour générer une paire de clés SSH.
+    - Ce script va créer une clé paie de clé SSH dans le dossier `ssh_keys`.
         ```bash
         chmod +x scripts/generate_key_pair.sh
         ./scripts/generate_key_pair.sh
         ```
 3. **Lancement de l'infrastructure avec Vagrant** :
-    - Exécutez la commande `vagrant up` pour lancer les machines virtuelles définies dans le Vagrantfile. Vagrant utilisera le fichier `cloud-config.yaml` pour configurer les machines avec la clé SSH.
+    - Exécutez la commande `vagrant up` pour lancer les machines virtuelles définies dans le Vagrantfile.
     - Cette étape va créer les machines virtuelles nécéssaires pour k3s et Grafana/Prometheus, et les configurer pour qu'elles soient accessibles via SSH avec la clé générée.
         ```bash
         vagrant up
@@ -144,14 +144,31 @@ Voici les étapes à suivre pour configurer l'infrastructure manuellement, sans 
         ansible-playbook -i ansible/inventory.ini ansible/deploy_k3s.yaml
         ```
 7. **Déploiement de Grafana et Prometheus** :
-    - Exécutez le playbook Ansible `deploy_grafana_prometheus.yaml` pour déployer Grafana et Prometheus sur une machine virtuelle dédiée. Ce playbook va installer Grafana et Prometheus, et les configurer pour qu'ils puissent collecter des métriques du cluster k3s.
+    - Exécutez le playbook Ansible `grafana-install.yaml` pour déployer Grafana et Prometheus sur une machine virtuelle dédiée. Ce playbook va installer Grafana et Prometheus, et les configurer pour qu'ils puissent collecter des métriques du cluster k3s.
     - Après l'exécution de ce playbook, vous devriez avoir Grafana et Prometheus opérationnels et configurés pour surveiller votre cluster k3s.
         ```bash
-        ansible-playbook -i ansible/inventory.ini ansible/deploy_grafana_prometheus.yaml
+        ansible-playbook -i ansible/inventory.ini ansible/grafana-install.yaml
         ```
+
+Maintenant si on veut utiliser les pipelines CI/CD, il faut d'abord configurer un runner sur la machine Windows. Une fois le runner configuré, vous pouvez éxécuter les pipelines en réalisant un push sur la branche `main`. Cependant, il faut noter que parfois les pipelines peuvent bloquer sur l'étape de connexion SSH avec Ansible, dans ce cas, il suffit de relancer la pipeline et cela devrait fonctionner.
+
+De plus dans les 2 cas, si vous souhaitez tester l'API vous devrez premièrement effectuer un port forwarding du service K8S exposant l'API, via K9S par exemple. Ainsi que de se connecter au pod de la base de données pour créer la table USER.
+Voici les différentes commandes à utiliser une fois connecté au shell du pod de la base de données :
+`mysql -p lacet_db`
+puis tapez le mot de passe `rootpassword`
+
+```
+CREATE TABLE users (
+	id NVARCHAR(255) PRIMARY KEY,
+	first_name NVARCHAR(100) NOT NULL,
+    last_name NVARCHAR(100) NOT NULL,
+    age int NOT NULL
+);
+```
 
 </div>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 </div>
+````

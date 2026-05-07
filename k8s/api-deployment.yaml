@@ -41,7 +41,7 @@ kind: Service
 metadata:
     name: api-lacet
 spec:
-    type: ClusterIP # Garantit que l'API n'est pas accessible de l'extérieur
+    type: ClusterIP # Garantit que l'API n'est pas accessible de l'extérieur (utilisé par défaut si jamais)
     ports:
         - port: 80
           targetPort: 3000

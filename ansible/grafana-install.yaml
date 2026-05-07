@@ -1,0 +1,63 @@
+---
+- name: Déployer Node Exporter partout
+  hosts: all # Cible K3s ET Monitoring
+  become: yes
+  tasks:
+      - name: Installer Node Exporter via APT
+        apt:
+            name: prometheus-node-exporter
+            state: present
+            update_cache: yes
+
+      - name: Démarrer et activer Node Exporter
+        systemd:
+            name: prometheus-node-exporter
+            state: started
+            enabled: yes
+- name: Déployer le grafana et prometheus
+  hosts: grafana
+  become: yes
+  tasks:
+      - name: Installer Prometheus
+        apt:
+            name: prometheus
+            state: present
+
+      - name: Configurer Prometheus pour écouter les 2 VMs
+        copy:
+            dest: /etc/prometheus/prometheus.yml
+            content: |
+                global:
+                  scrape_interval: 15s
+                scrape_configs:
+                  - job_name: 'node_exporter'
+                    static_configs:
+                      - targets: ['localhost:9100', '192.168.56.10:9100']
+        notify: restart prometheus
+
+      - name: Ajouter la clé GPG de Grafana
+        apt_key:
+            url: https://apt.grafana.com/gpg.key
+            state: present
+
+      - name: Ajouter le dépôt Grafana
+        apt_repository:
+            repo: deb https://apt.grafana.com stable main
+            state: present
+
+      - name: Installer Grafana
+        apt:
+            name: grafana
+            state: present
+            update_cache: yes
+
+      - name: Démarrer et activer Grafana
+        systemd:
+            name: grafana-server
+            state: started
+            enabled: yes
+  handlers:
+      - name: restart prometheus
+        systemd:
+            name: prometheus
+            state: restarted

@@ -45,9 +45,6 @@ jobs:
         runs-on: self-hosted
         needs: infra
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-
             - name: Login to DockerHub
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
@@ -60,9 +57,6 @@ jobs:
         runs-on: self-hosted
         needs: build-and-push
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-
             - name: Apply K8s Manifests (via WSL)
               run: |
                   wsl kubectl apply -f k8s/
